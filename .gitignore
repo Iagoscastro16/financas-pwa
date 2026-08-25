@@ -1,0 +1,15 @@
+__pycache__/
+
+*.pyc
+
+.venv/
+
+node_modules
+
+base_fin.db
+
+dist/
+
+.vite
+
+.env
