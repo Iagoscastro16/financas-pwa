@@ -16,3 +16,7 @@ dist/
 .vite
 
 .env
+
+.coverage
+htmlcov/
+.pytest_cache/
