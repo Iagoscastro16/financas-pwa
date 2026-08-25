@@ -2,12 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.auth import get_current_user
 from app.database import get_db
 from app.models.categoria import Categoria
 from app.models.orcamento import Orcamento
 from app.schemas.orcamento import OrcamentoCreate, OrcamentoRead, OrcamentoUpdate
 
-router = APIRouter(prefix="/orcamentos", tags=["orcamentos"])
+router = APIRouter(
+    prefix="/orcamentos", tags=["orcamentos"], dependencies=[Depends(get_current_user)]
+)
 
 
 @router.post("", response_model=OrcamentoRead, status_code=status.HTTP_201_CREATED)

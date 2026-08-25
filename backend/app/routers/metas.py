@@ -2,11 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.auth import get_current_user
 from app.database import get_db
 from app.models.meta import Meta
 from app.schemas.meta import MetaCreate, MetaRead, MetaUpdate
 
-router = APIRouter(prefix="/metas", tags=["metas"])
+router = APIRouter(prefix="/metas", tags=["metas"], dependencies=[Depends(get_current_user)])
 
 
 @router.post("", response_model=MetaRead, status_code=status.HTTP_201_CREATED)

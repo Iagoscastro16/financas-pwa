@@ -1,13 +1,19 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from app import models  # noqa: F401  (garante que todos os modelos sejam registrados)
 from app.database import Base, engine
-from app.routers import categorias, contas, metas, orcamentos, transacoes
+from app.limiter import limiter
+from app.routers import auth, categorias, contas, metas, orcamentos, transacoes
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Finanças API")
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,6 +23,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(contas.router)
 app.include_router(categorias.router)
 app.include_router(transacoes.router)

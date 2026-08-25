@@ -2,13 +2,16 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.auth import get_current_user
 from app.database import get_db
 from app.models.categoria import Categoria
 from app.models.conta import Conta
 from app.models.transacao import Transacao
 from app.schemas.transacao import TransacaoCreate, TransacaoRead, TransacaoUpdate
 
-router = APIRouter(prefix="/transacoes", tags=["transacoes"])
+router = APIRouter(
+    prefix="/transacoes", tags=["transacoes"], dependencies=[Depends(get_current_user)]
+)
 
 
 def _buscar_categorias(db: Session, categoria_ids: list[int]) -> list[Categoria]:

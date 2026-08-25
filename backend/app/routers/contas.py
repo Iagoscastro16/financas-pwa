@@ -2,11 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.auth import get_current_user
 from app.database import get_db
 from app.models.conta import Conta
 from app.schemas.conta import ContaCreate, ContaRead, ContaUpdate
 
-router = APIRouter(prefix="/contas", tags=["contas"])
+router = APIRouter(prefix="/contas", tags=["contas"], dependencies=[Depends(get_current_user)])
 
 
 @router.post("", response_model=ContaRead, status_code=status.HTTP_201_CREATED)
