@@ -8,6 +8,9 @@ node_modules
 
 base_fin.db
 
+financas.db
+*.db
+
 dist/
 
 .vite
