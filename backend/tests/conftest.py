@@ -25,11 +25,19 @@ from sqlalchemy import create_engine  # noqa: E402
 from sqlalchemy.orm import sessionmaker  # noqa: E402
 from sqlalchemy.pool import StaticPool  # noqa: E402
 
-from app.audit_database import AuditSessionLocal  # noqa: E402
+from app.audit_database import AuditBase, AuditSessionLocal, audit_engine  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.limiter import limiter  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models.log_auditoria import LogAuditoria  # noqa: E402
+
+# audit_engine é um singleton de módulo (em memória, StaticPool) que vive por
+# toda a sessão de testes — diferente do engine principal, que cada teste
+# recria via a fixture `db_engine` abaixo. Antes, esse create_all acontecia
+# como efeito colateral da importação de app.main; agora que main.py não cria
+# mais schema em runtime (schema é responsabilidade do Alembic para bancos
+# reais), os testes precisam criá-lo explicitamente aqui.
+AuditBase.metadata.create_all(bind=audit_engine)
 
 
 @pytest.fixture(autouse=True)
