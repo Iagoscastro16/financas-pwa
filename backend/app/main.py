@@ -9,6 +9,7 @@ from app.database import Base, engine
 from app.limiter import limiter
 from app.models import log_auditoria  # noqa: F401  (registra o model de auditoria)
 from app.routers import auditoria, auth, categorias, contas, metas, orcamentos, transacoes
+from app.security_headers import add_security_headers
 
 Base.metadata.create_all(bind=engine)
 AuditBase.metadata.create_all(bind=audit_engine)
@@ -25,6 +26,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.middleware("http")(add_security_headers)
 
 app.include_router(auth.router)
 app.include_router(contas.router)
