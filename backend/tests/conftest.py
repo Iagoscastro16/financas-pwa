@@ -16,6 +16,8 @@ os.environ["JWT_SECRET_KEY"] = "test-secret-key-used-only-in-pytest"
 # crie/toque no financas.db real: o app é montado sobre um banco em memória
 # descartável, e cada teste usa seu próprio engine isolado via override de get_db.
 os.environ["DATABASE_URL"] = "sqlite://"
+# Mesma lógica para o log de auditoria: nunca tocar o auditoria.db real.
+os.environ["AUDIT_DATABASE_URL"] = "sqlite://"
 
 import pytest  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
@@ -23,9 +25,11 @@ from sqlalchemy import create_engine  # noqa: E402
 from sqlalchemy.orm import sessionmaker  # noqa: E402
 from sqlalchemy.pool import StaticPool  # noqa: E402
 
+from app.audit_database import AuditSessionLocal  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.limiter import limiter  # noqa: E402
 from app.main import app  # noqa: E402
+from app.models.log_auditoria import LogAuditoria  # noqa: E402
 
 
 @pytest.fixture(autouse=True)
@@ -34,6 +38,25 @@ def _reset_rate_limiter():
     limiter.reset()
     yield
     limiter.reset()
+
+
+@pytest.fixture(autouse=True)
+def _clear_audit_log():
+    """O engine de auditoria é um singleton de módulo (em memória, StaticPool),
+    então limpa a tabela antes/depois de cada teste para isolar os testes
+    entre si."""
+
+    def _limpar():
+        db = AuditSessionLocal()
+        try:
+            db.query(LogAuditoria).delete()
+            db.commit()
+        finally:
+            db.close()
+
+    _limpar()
+    yield
+    _limpar()
 
 
 @pytest.fixture()
