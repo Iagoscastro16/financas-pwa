@@ -1,9 +1,11 @@
 import json
-import sys
+import logging
 from typing import Any
 
 from app.audit_database import AuditSessionLocal
 from app.models.log_auditoria import LogAuditoria
+
+logger = logging.getLogger(__name__)
 
 DETALHES_MAX_LENGTH = 2000
 
@@ -50,7 +52,8 @@ def registrar_auditoria(
 
     Falhas ao registrar o log NUNCA devem interromper a operação principal
     (create/update/delete/login): qualquer exceção aqui é capturada e
-    reportada apenas em stderr.
+    reportada apenas no log técnico/operacional (não em auditoria.db — uma
+    falha ao gravar auditoria não é, ela própria, um evento de auditoria).
     """
     try:
         detalhes_serializados = _serializar_detalhes(detalhes)
@@ -68,5 +71,10 @@ def registrar_auditoria(
             db.commit()
         finally:
             db.close()
-    except Exception as exc:  # noqa: BLE001 — logging nunca pode derrubar a operação principal
-        print(f"[auditoria] falha ao registrar log de auditoria: {exc}", file=sys.stderr)
+    except Exception:  # noqa: BLE001 — logging nunca pode derrubar a operação principal
+        logger.exception(
+            "Falha ao registrar log de auditoria (usuario=%s, acao=%s, entidade=%s)",
+            usuario,
+            acao,
+            entidade,
+        )
