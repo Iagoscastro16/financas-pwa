@@ -37,3 +37,30 @@ input {
   display: flex;
   flex-direction: column;
 }
+
+/* Convenção compartilhada de "card" usada por todos os blocos de
+   conteúdo (Dashboard e futuras páginas): fundo de superfície, cantos
+   arredondados e padding consistente. */
+.card {
+  background-color: var(--color-surface);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+/* Placeholder de carregamento reutilizável: componentes definem apenas
+   largura/altura e combinam com esta classe. */
+.skeleton {
+  background-color: var(--color-bg);
+  border-radius: 8px;
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}

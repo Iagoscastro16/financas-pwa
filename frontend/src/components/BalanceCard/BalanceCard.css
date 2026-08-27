@@ -1,0 +1,23 @@
+.balance-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.balance-card__label {
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.balance-card__value {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.balance-card__skeleton {
+  height: 2.25rem;
+  width: 60%;
+}

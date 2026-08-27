@@ -1,0 +1,36 @@
+.summary-card {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.summary-card__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.summary-card__label {
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.summary-card__value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.summary-card__value--income {
+  color: var(--color-accent-income);
+}
+
+.summary-card__value--expense {
+  color: var(--color-accent-primary);
+}
+
+.summary-card__skeleton {
+  height: 1.5rem;
+  width: 80%;
+}

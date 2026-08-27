@@ -1,0 +1,17 @@
+.category-pie__title {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.category-pie__empty {
+  margin: 0;
+  padding: 2.5rem 0;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.category-pie__skeleton {
+  height: 280px;
+}
