@@ -6,6 +6,17 @@
 
 .layout__content {
   flex: 1;
+  /* Flex items default to min-width:auto, which refuses to shrink below
+     their content's max-content width. Without this, a child that can't
+     wrap tightly enough at the current width (e.g. a header row with
+     justify-content:space-between) forces this element — and the whole
+     mobile layout viewport — wider than the real screen. Real/emulated
+     mobile browsers then re-expand and rescale the page to fit that
+     overflow (a mobile-viewport-only behavior; desktop browsers just show
+     a harmless horizontal scrollbar), which is what produced the
+     "rows overlap the header" glitch when content height changes crossed
+     that overflow threshold on navigation. */
+  min-width: 0;
   padding: 1.5rem;
   padding-bottom: 5rem; /* espaço para a BottomNav fixa em telas pequenas */
 }

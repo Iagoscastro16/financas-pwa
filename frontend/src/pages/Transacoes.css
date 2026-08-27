@@ -1,0 +1,34 @@
+.transacoes-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 720px;
+}
+
+.transacoes-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.transacoes-page__nova-btn {
+  padding: 0.6rem 1.1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--color-accent-primary);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.transacoes-page__error {
+  color: var(--color-accent-primary);
+  margin: 0;
+}
+
+.transacoes-page__skeleton {
+  height: 220px;
+}

@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.audit import model_to_dict, registrar_auditoria
 from app.auth import get_current_user
 from app.database import get_db
+from app.mes_ano import limites_mes
 from app.models.categoria import Categoria
 from app.models.orcamento import Orcamento
 from app.schemas.orcamento import OrcamentoCreate, OrcamentoRead, OrcamentoUpdate
@@ -43,8 +44,16 @@ def criar_orcamento(
 
 
 @router.get("", response_model=list[OrcamentoRead])
-def listar_orcamentos(db: Session = Depends(get_db)) -> list[Orcamento]:
-    return list(db.execute(select(Orcamento)).scalars().all())
+def listar_orcamentos(mes_ano: str | None = None, db: Session = Depends(get_db)) -> list[Orcamento]:
+    stmt = select(Orcamento)
+    if mes_ano is not None:
+        # orcamento.mes_ano já é armazenado como a própria string "YYYY-MM"
+        # (ao contrário de transacao.data, que é uma coluna Date e precisa de
+        # comparação por intervalo): reaproveita limites_mes() só pela
+        # validação de formato, e filtra por igualdade direta.
+        limites_mes(mes_ano)
+        stmt = stmt.where(Orcamento.mes_ano == mes_ano)
+    return list(db.execute(stmt).scalars().all())
 
 
 @router.get("/{orcamento_id}", response_model=OrcamentoRead)

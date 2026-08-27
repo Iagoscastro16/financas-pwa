@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.audit import model_to_dict, registrar_auditoria
 from app.auth import get_current_user
 from app.database import get_db
+from app.mes_ano import limites_mes
 from app.models.categoria import Categoria
 from app.models.conta import Conta
 from app.models.transacao import Transacao
@@ -67,8 +68,12 @@ def criar_transacao(
 
 
 @router.get("", response_model=list[TransacaoRead])
-def listar_transacoes(db: Session = Depends(get_db)) -> list[Transacao]:
-    return list(db.execute(select(Transacao)).scalars().all())
+def listar_transacoes(mes_ano: str | None = None, db: Session = Depends(get_db)) -> list[Transacao]:
+    stmt = select(Transacao)
+    if mes_ano is not None:
+        inicio, fim = limites_mes(mes_ano)
+        stmt = stmt.where(Transacao.data >= inicio, Transacao.data < fim)
+    return list(db.execute(stmt).scalars().all())
 
 
 @router.get("/{transacao_id}", response_model=TransacaoRead)

@@ -48,6 +48,55 @@ def test_listar_orcamentos(auth_client, categoria):
     assert len(response.json()) >= 1
 
 
+def test_listar_orcamentos_filtra_por_mes_ano(auth_client, categoria):
+    auth_client.post(
+        "/orcamentos",
+        json={"categoria_id": categoria["id"], "mes_ano": "2026-03", "valor_maximo": 200},
+    )
+    outro = auth_client.post(
+        "/orcamentos",
+        json={"categoria_id": categoria["id"], "mes_ano": "2026-04", "valor_maximo": 999},
+    ).json()
+
+    response = auth_client.get("/orcamentos", params={"mes_ano": "2026-03"})
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body) >= 1
+    assert all(o["mes_ano"] == "2026-03" for o in body)
+    assert outro["id"] not in {o["id"] for o in body}
+
+
+def test_listar_orcamentos_mes_ano_sem_orcamentos_retorna_lista_vazia(auth_client, categoria):
+    auth_client.post(
+        "/orcamentos",
+        json={"categoria_id": categoria["id"], "mes_ano": "2026-03", "valor_maximo": 200},
+    )
+
+    response = auth_client.get("/orcamentos", params={"mes_ano": "2026-11"})
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_listar_orcamentos_sem_filtro_retorna_todos(auth_client, categoria):
+    auth_client.post(
+        "/orcamentos",
+        json={"categoria_id": categoria["id"], "mes_ano": "2026-03", "valor_maximo": 200},
+    )
+    auth_client.post(
+        "/orcamentos",
+        json={"categoria_id": categoria["id"], "mes_ano": "2026-04", "valor_maximo": 999},
+    )
+
+    response = auth_client.get("/orcamentos")
+    assert response.status_code == 200
+    assert len(response.json()) >= 2
+
+
+def test_listar_orcamentos_mes_ano_formato_invalido(auth_client):
+    response = auth_client.get("/orcamentos", params={"mes_ano": "invalido"})
+    assert response.status_code == 400
+
+
 def test_obter_orcamento_existente(auth_client, categoria):
     criado = auth_client.post(
         "/orcamentos",

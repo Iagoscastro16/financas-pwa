@@ -1,0 +1,118 @@
+.multiselect {
+  position: relative;
+}
+
+.multiselect__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  min-height: 2.4rem;
+  padding: 0.4rem;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-text-secondary);
+  border-radius: 8px;
+}
+
+.multiselect__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.multiselect__remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.multiselect__remove:hover {
+  color: var(--color-accent-primary);
+}
+
+.multiselect__add-btn {
+  border: 1px dashed var(--color-text-secondary);
+  background: none;
+  color: var(--color-text-secondary);
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.multiselect__add-btn:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+
+.multiselect__dropdown {
+  position: absolute;
+  top: calc(100% + 0.3rem);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-text-secondary);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.multiselect__filter {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-text-secondary);
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  color: var(--color-text-primary);
+  font-size: 0.88rem;
+}
+
+.multiselect__filter:focus {
+  outline: none;
+  border-color: var(--color-accent-primary);
+}
+
+.multiselect__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 160px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.multiselect__option-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.multiselect__option-label:hover {
+  background-color: color-mix(in srgb, var(--color-accent-primary) 12%, transparent);
+}
+
+.multiselect__empty {
+  padding: 0.4rem 0.5rem;
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+}

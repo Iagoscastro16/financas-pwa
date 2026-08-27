@@ -108,6 +108,60 @@ def test_atualizar_transacao(auth_client, conta):
     assert body["valor"] == 99.9
 
 
+def test_listar_transacoes_filtra_por_mes_ano(auth_client, conta):
+    auth_client.post(
+        "/transacoes",
+        json={"conta_id": conta["id"], "tipo": "entrada", "valor": 100, "data": "2026-03-10"},
+    )
+    auth_client.post(
+        "/transacoes",
+        json={"conta_id": conta["id"], "tipo": "saida", "valor": 30, "data": "2026-03-20"},
+    )
+    fora_do_mes = auth_client.post(
+        "/transacoes",
+        json={"conta_id": conta["id"], "tipo": "saida", "valor": 999, "data": "2026-04-01"},
+    ).json()
+
+    response = auth_client.get("/transacoes", params={"mes_ano": "2026-03"})
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body) == 2
+    ids_retornados = {t["id"] for t in body}
+    assert fora_do_mes["id"] not in ids_retornados
+    assert all(t["data"].startswith("2026-03") for t in body)
+
+
+def test_listar_transacoes_mes_ano_sem_transacoes_retorna_lista_vazia(auth_client, conta):
+    auth_client.post(
+        "/transacoes",
+        json={"conta_id": conta["id"], "tipo": "entrada", "valor": 100, "data": "2026-03-10"},
+    )
+
+    response = auth_client.get("/transacoes", params={"mes_ano": "2026-05"})
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_listar_transacoes_sem_filtro_retorna_todas(auth_client, conta):
+    auth_client.post(
+        "/transacoes",
+        json={"conta_id": conta["id"], "tipo": "entrada", "valor": 100, "data": "2026-03-10"},
+    )
+    auth_client.post(
+        "/transacoes",
+        json={"conta_id": conta["id"], "tipo": "saida", "valor": 30, "data": "2026-04-01"},
+    )
+
+    response = auth_client.get("/transacoes")
+    assert response.status_code == 200
+    assert len(response.json()) >= 2
+
+
+def test_listar_transacoes_mes_ano_formato_invalido(auth_client):
+    response = auth_client.get("/transacoes", params={"mes_ano": "invalido"})
+    assert response.status_code == 400
+
+
 def test_remover_transacao_e_hard_delete(auth_client, conta):
     criada = auth_client.post(
         "/transacoes",

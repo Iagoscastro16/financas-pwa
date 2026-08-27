@@ -1,7 +1,9 @@
 import client from "./client";
 
-export async function listarTransacoes() {
-  const response = await client.get("/transacoes");
+export async function listarTransacoes({ mesAno } = {}) {
+  const response = await client.get("/transacoes", {
+    params: mesAno ? { mes_ano: mesAno } : {},
+  });
   return response.data;
 }
 

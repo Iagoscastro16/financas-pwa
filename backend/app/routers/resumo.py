@@ -1,12 +1,13 @@
-from datetime import date, datetime
+from datetime import date
 
 import pandas as pd
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.auth import get_current_user
 from app.database import get_db
+from app.mes_ano import limites_mes
 from app.models.conta import Conta
 from app.models.transacao import Transacao, TipoTransacao
 from app.routers.configuracao import obter_valor_config
@@ -19,20 +20,6 @@ SEM_CATEGORIA_NOME = "Sem categoria"
 
 def _mes_atual() -> str:
     return date.today().strftime("%Y-%m")
-
-
-def _limites_mes(mes_ano: str) -> tuple[date, date]:
-    try:
-        inicio = datetime.strptime(mes_ano, "%Y-%m").date()
-    except ValueError:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="mes_ano deve estar no formato YYYY-MM"
-        )
-    if inicio.month == 12:
-        fim = date(inicio.year + 1, 1, 1)
-    else:
-        fim = date(inicio.year, inicio.month + 1, 1)
-    return inicio, fim
 
 
 def _saldo_total_contas(db: Session) -> float:
@@ -59,7 +46,7 @@ def _saldo_total_contas(db: Session) -> float:
 
 
 def _resumo_mensal(db: Session, mes_ano: str) -> ResumoMensal:
-    inicio, fim = _limites_mes(mes_ano)
+    inicio, fim = limites_mes(mes_ano)
     linhas = db.execute(
         select(Transacao.tipo, Transacao.valor).where(Transacao.data >= inicio, Transacao.data < fim)
     ).all()
@@ -103,7 +90,7 @@ def resumo_mensal(mes_ano: str | None = None, db: Session = Depends(get_db)) -> 
 
 @router.get("/categorias", response_model=list[ResumoCategoria])
 def resumo_categorias(mes_ano: str | None = None, db: Session = Depends(get_db)) -> list[ResumoCategoria]:
-    inicio, fim = _limites_mes(mes_ano or _mes_atual())
+    inicio, fim = limites_mes(mes_ano or _mes_atual())
     transacoes = _linhas_por_categoria(db, inicio=inicio, fim=fim, tipos=[TipoTransacao.saida])
 
     # Assunção: uma transação vinculada a N categorias tem seu valor
