@@ -6,7 +6,17 @@ from slowapi.errors import RateLimitExceeded
 from app import models  # noqa: F401  (garante que todos os modelos sejam registrados)
 from app.limiter import limiter
 from app.models import log_auditoria  # noqa: F401  (registra o model de auditoria)
-from app.routers import auditoria, auth, categorias, contas, metas, orcamentos, transacoes
+from app.routers import (
+    auditoria,
+    auth,
+    categorias,
+    configuracao,
+    contas,
+    metas,
+    orcamentos,
+    resumo,
+    transacoes,
+)
 from app.security_headers import add_security_headers
 
 # Schema criado/atualizado via Alembic (ver backend/README.md), não mais em
@@ -34,6 +44,8 @@ app.include_router(transacoes.router)
 app.include_router(orcamentos.router)
 app.include_router(metas.router)
 app.include_router(auditoria.router)
+app.include_router(configuracao.router)
+app.include_router(resumo.router)
 
 
 @app.get("/health")
