@@ -1,7 +1,9 @@
 import client from "./client";
 
-export async function listarOrcamentos() {
-  const response = await client.get("/orcamentos");
+export async function listarOrcamentos({ mesAno } = {}) {
+  const response = await client.get("/orcamentos", {
+    params: mesAno ? { mes_ano: mesAno } : {},
+  });
   return response.data;
 }
 

@@ -1,0 +1,92 @@
+.budget-form-dialog {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border: none;
+  border-radius: 12px;
+  padding: 0;
+  max-width: 380px;
+  width: calc(100vw - 2rem);
+  max-height: calc(100vh - 4rem);
+  overflow: auto;
+}
+
+.budget-form-dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.budget-form {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  gap: 0.35rem;
+}
+
+.budget-form__title {
+  margin: 0 0 0.25rem;
+  font-size: 1.15rem;
+}
+
+.budget-form__mes {
+  margin: 0 0 0.75rem;
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+}
+
+.budget-form__label {
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  margin-top: 0.6rem;
+}
+
+.budget-form__input {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-text-secondary);
+  border-radius: 8px;
+  padding: 0.55rem 0.7rem;
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
+}
+
+.budget-form__input:focus {
+  outline: none;
+  border-color: var(--color-accent-primary);
+}
+
+.budget-form__error {
+  color: var(--color-accent-primary);
+  font-size: 0.78rem;
+}
+
+.budget-form__api-error {
+  color: var(--color-accent-primary);
+  font-size: 0.85rem;
+  margin: 0.75rem 0 0;
+}
+
+.budget-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.budget-form__button {
+  padding: 0.55rem 1.1rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-text-secondary);
+  background: none;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.budget-form__button--confirm {
+  background-color: var(--color-accent-primary);
+  border-color: var(--color-accent-primary);
+  font-weight: 600;
+}
+
+.budget-form__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
