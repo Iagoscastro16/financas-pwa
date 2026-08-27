@@ -1,0 +1,125 @@
+.metas-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 720px;
+}
+
+.metas-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.metas-page__title {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.metas-page__nova-btn {
+  padding: 0.6rem 1.1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--color-accent-primary);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.metas-page__error {
+  color: var(--color-accent-primary);
+  margin: 0;
+}
+
+.metas-page__empty {
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: 2rem 0;
+  margin: 0;
+}
+
+.metas-page__skeleton {
+  height: 220px;
+}
+
+.metas-page__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.meta-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.9rem 1rem;
+  background-color: var(--color-bg);
+  border-radius: 10px;
+}
+
+.meta-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.meta-card__nome {
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.meta-card__actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.meta-card__action-btn {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid var(--color-text-secondary);
+  background: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.meta-card__action-btn:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+
+.meta-card__action-btn--danger:hover {
+  color: var(--color-accent-primary);
+  border-color: var(--color-accent-primary);
+}
+
+.meta-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.meta-card__necessario--concluida {
+  color: var(--color-accent-income);
+  font-weight: 600;
+}
+
+.meta-card__necessario--vencido {
+  color: var(--color-accent-warning);
+  font-weight: 600;
+}
