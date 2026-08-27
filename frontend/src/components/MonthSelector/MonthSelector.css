@@ -4,6 +4,8 @@
   justify-content: center;
   gap: 1.25rem;
   padding: 0.25rem 0;
+  width: fit-content;
+  align-self: flex-start;
 }
 
 .month-selector__label {
