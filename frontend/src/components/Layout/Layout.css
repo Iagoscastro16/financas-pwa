@@ -1,0 +1,17 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.layout__content {
+  flex: 1;
+  padding: 1.5rem;
+  padding-bottom: 5rem; /* espaço para a BottomNav fixa em telas pequenas */
+}
+
+@media (min-width: 768px) {
+  .layout__content {
+    padding-bottom: 1.5rem;
+  }
+}
