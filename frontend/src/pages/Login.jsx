@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
+import { useEnterToNextField } from "../hooks/useEnterToNextField";
 import "./Login.css";
 
 export default function Login() {
@@ -12,6 +13,7 @@ export default function Login() {
 
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { ref: formRef, onKeyDown: handleFormKeyDown } = useEnterToNextField();
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -29,7 +31,12 @@ export default function Login() {
 
   return (
     <div className="login">
-      <form className="login__form" onSubmit={handleSubmit}>
+      <form
+        className="login__form"
+        onSubmit={handleSubmit}
+        ref={formRef}
+        onKeyDown={handleFormKeyDown}
+      >
         <h1 className="login__title">Finanças</h1>
 
         <label className="login__label" htmlFor="username">

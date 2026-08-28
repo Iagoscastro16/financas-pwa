@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { listarCategorias } from "../../api/categorias";
 import { atualizarOrcamento, criarOrcamento } from "../../api/orcamentos";
 import { nomeMesAno } from "../../utils/mesAno";
+import { useEnterToNextField } from "../../hooks/useEnterToNextField";
 import Dropdown from "../Dropdown/Dropdown";
 import "./BudgetForm.css";
 
@@ -19,6 +20,7 @@ function valoresIniciais(initialValues) {
 export default function BudgetForm({ open, initialValues, mesAno, onClose, onSaved }) {
   const dialogRef = useRef(null);
   const isEdit = Boolean(initialValues);
+  const { ref: formRef, onKeyDown: handleFormKeyDown } = useEnterToNextField();
 
   const [categorias, setCategorias] = useState([]);
   const [form, setForm] = useState(() => valoresIniciais(initialValues));
@@ -119,7 +121,13 @@ export default function BudgetForm({ open, initialValues, mesAno, onClose, onSav
         if (event.target === dialogRef.current) onClose();
       }}
     >
-      <form className="budget-form" onSubmit={handleSubmit} noValidate>
+      <form
+        className="budget-form"
+        onSubmit={handleSubmit}
+        noValidate
+        ref={formRef}
+        onKeyDown={handleFormKeyDown}
+      >
         <h2 className="budget-form__title">{isEdit ? "Editar orçamento" : "Novo orçamento"}</h2>
         <p className="budget-form__mes">Mês: {nomeMesAno(mesAno)}</p>
 

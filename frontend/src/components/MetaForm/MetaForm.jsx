@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { atualizarMeta, criarMeta } from "../../api/metas";
+import { useEnterToNextField } from "../../hooks/useEnterToNextField";
 import "./MetaForm.css";
 
 function valoresIniciais(initialValues) {
@@ -18,6 +19,7 @@ function valoresIniciais(initialValues) {
 export default function MetaForm({ open, initialValues, onClose, onSaved }) {
   const dialogRef = useRef(null);
   const isEdit = Boolean(initialValues);
+  const { ref: formRef, onKeyDown: handleFormKeyDown } = useEnterToNextField();
 
   const [form, setForm] = useState(() => valoresIniciais(initialValues));
   const [errors, setErrors] = useState({});
@@ -107,7 +109,13 @@ export default function MetaForm({ open, initialValues, onClose, onSaved }) {
         if (event.target === dialogRef.current) onClose();
       }}
     >
-      <form className="meta-form" onSubmit={handleSubmit} noValidate>
+      <form
+        className="meta-form"
+        onSubmit={handleSubmit}
+        noValidate
+        ref={formRef}
+        onKeyDown={handleFormKeyDown}
+      >
         <h2 className="meta-form__title">{isEdit ? "Editar meta" : "Nova meta"}</h2>
 
         <label className="meta-form__label" htmlFor="mf-nome">

@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { listarCategorias } from "../../api/categorias";
 import { listarContas } from "../../api/contas";
 import { atualizarTransacao, criarTransacao } from "../../api/transacoes";
+import { useEnterToNextField } from "../../hooks/useEnterToNextField";
 import Dropdown from "../Dropdown/Dropdown";
 import MultiSelect from "../MultiSelect/MultiSelect";
 import "./TransactionForm.css";
@@ -35,6 +36,7 @@ function valoresIniciais(initialValues) {
 export default function TransactionForm({ open, initialValues, onClose, onSaved }) {
   const dialogRef = useRef(null);
   const isEdit = Boolean(initialValues);
+  const { ref: formRef, onKeyDown: handleFormKeyDown } = useEnterToNextField();
 
   const [contas, setContas] = useState([]);
   const [categorias, setCategorias] = useState([]);
@@ -143,7 +145,13 @@ export default function TransactionForm({ open, initialValues, onClose, onSaved 
         if (event.target === dialogRef.current) onClose();
       }}
     >
-      <form className="transaction-form" onSubmit={handleSubmit} noValidate>
+      <form
+        className="transaction-form"
+        onSubmit={handleSubmit}
+        noValidate
+        ref={formRef}
+        onKeyDown={handleFormKeyDown}
+      >
         <h2 className="transaction-form__title">
           {isEdit ? "Editar transação" : "Nova transação"}
         </h2>
