@@ -6,6 +6,7 @@
   padding: 0.25rem 0;
   width: fit-content;
   align-self: flex-start;
+   margin: 0 auto;
 }
 
 .month-selector__label {
@@ -36,6 +37,6 @@
 }
 
 .month-selector__arrow:disabled {
-  opacity: 0.35;
+  opacity: 0.5;
   cursor: not-allowed;
 }
