@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.audit import model_to_dict, registrar_auditoria
@@ -11,11 +11,14 @@ from app.mes_ano import limites_mes
 from app.models.categoria import Categoria
 from app.models.conta import Conta
 from app.models.transacao import Transacao
+from app.models.transacao_categoria import TransacaoCategoria
 from app.schemas.transacao import TransacaoCreate, TransacaoRead, TransacaoUpdate
 
 router = APIRouter(
     prefix="/transacoes", tags=["transacoes"], dependencies=[Depends(get_current_user)]
 )
+
+ORDENACOES_VALIDAS = {"data_desc", "data_asc", "categoria"}
 
 
 def _ip(request: Request) -> str | None:
@@ -72,11 +75,53 @@ def criar_transacao(
 
 
 @router.get("", response_model=list[TransacaoRead])
-def listar_transacoes(mes_ano: str | None = None, db: Session = Depends(get_db)) -> list[Transacao]:
+def listar_transacoes(
+    mes_ano: str | None = None,
+    ordenar_por: str = "data_desc",
+    db: Session = Depends(get_db),
+) -> list[Transacao]:
+    if ordenar_por not in ORDENACOES_VALIDAS:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"ordenar_por deve ser um dos seguintes: {', '.join(sorted(ORDENACOES_VALIDAS))}",
+        )
+
     stmt = select(Transacao)
     if mes_ano is not None:
         inicio, fim = limites_mes(mes_ano)
         stmt = stmt.where(Transacao.data >= inicio, Transacao.data < fim)
+
+    if ordenar_por == "data_asc":
+        stmt = stmt.order_by(Transacao.data.asc(), Transacao.id.asc())
+    elif ordenar_por == "categoria":
+        # Assunção: uma transação pode estar vinculada a várias categorias;
+        # para ordenar por "a" categoria usamos a primeira delas. A tabela
+        # de associação transacao_categoria só tem a chave composta
+        # (transacao_id, categoria_id) — nenhuma coluna de ordem/insercao —
+        # então a ordem real em que as categorias foram vinculadas não é
+        # recuperável de forma portátil entre SQLite e Postgres. Como proxy
+        # determinístico, usamos a categoria de menor id vinculada à
+        # transação. Mesmo espírito de escolha pragmática da divisão
+        # igualitária assumida em /resumo/categorias. Transações sem
+        # nenhuma categoria não têm essa subconsulta preenchida (NULL) e
+        # vão para o final da lista (nulls_last). Comparamos em minúsculas
+        # porque "A-Z" para quem lê a lista é alfabetização
+        # case-insensitive (ex.: "teste" antes de "Uber") — a ordenação
+        # binária padrão do SQL colocaria toda maiúscula antes de qualquer
+        # minúscula, o que não bate com a expectativa do usuário.
+        primeira_categoria_nome = (
+            select(func.lower(Categoria.nome))
+            .select_from(TransacaoCategoria)
+            .join(Categoria, Categoria.id == TransacaoCategoria.categoria_id)
+            .where(TransacaoCategoria.transacao_id == Transacao.id)
+            .order_by(TransacaoCategoria.categoria_id.asc())
+            .limit(1)
+            .scalar_subquery()
+        )
+        stmt = stmt.order_by(primeira_categoria_nome.asc().nulls_last(), Transacao.id.asc())
+    else:
+        stmt = stmt.order_by(Transacao.data.desc(), Transacao.id.desc())
+
     return list(db.execute(stmt).scalars().all())
 
 

@@ -1,9 +1,10 @@
 import client from "./client";
 
-export async function listarTransacoes({ mesAno } = {}) {
-  const response = await client.get("/transacoes", {
-    params: mesAno ? { mes_ano: mesAno } : {},
-  });
+export async function listarTransacoes({ mesAno, ordenarPor } = {}) {
+  const params = {};
+  if (mesAno) params.mes_ano = mesAno;
+  if (ordenarPor) params.ordenar_por = ordenarPor;
+  const response = await client.get("/transacoes", { params });
   return response.data;
 }
 

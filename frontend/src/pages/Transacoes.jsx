@@ -2,14 +2,22 @@ import { useEffect, useState } from "react";
 
 import { listarTransacoes, removerTransacao } from "../api/transacoes";
 import { mesAtual } from "../utils/mesAno";
+import Dropdown from "../components/Dropdown/Dropdown";
 import MonthSelector from "../components/MonthSelector/MonthSelector";
 import TransactionList from "../components/TransactionList/TransactionList";
 import TransactionForm from "../components/TransactionForm/TransactionForm";
 import ConfirmDialog from "../components/ConfirmDialog/ConfirmDialog";
 import "./Transacoes.css";
 
+const OPCOES_ORDENACAO = [
+  { value: "data_desc", label: "Mais recentes" },
+  { value: "data_asc", label: "Mais antigas" },
+  { value: "categoria", label: "Categoria (A-Z)" },
+];
+
 export default function Transacoes() {
   const [selectedMonth, setSelectedMonth] = useState(mesAtual());
+  const [ordenarPor, setOrdenarPor] = useState("data_desc");
   const [transacoes, setTransacoes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,7 +30,7 @@ export default function Transacoes() {
     setLoading(true);
     setError(null);
     try {
-      const dados = await listarTransacoes({ mesAno: selectedMonth });
+      const dados = await listarTransacoes({ mesAno: selectedMonth, ordenarPor });
       setTransacoes(dados);
     } catch {
       setError("Não foi possível carregar as transações. Tente novamente.");
@@ -36,7 +44,7 @@ export default function Transacoes() {
     setLoading(true);
     setError(null);
 
-    listarTransacoes({ mesAno: selectedMonth })
+    listarTransacoes({ mesAno: selectedMonth, ordenarPor })
       .then((dados) => {
         if (cancelado) return;
         setTransacoes(dados);
@@ -52,7 +60,7 @@ export default function Transacoes() {
     return () => {
       cancelado = true;
     };
-  }, [selectedMonth]);
+  }, [selectedMonth, ordenarPor]);
 
   function abrirNova() {
     setEditando(null);
@@ -88,7 +96,15 @@ export default function Transacoes() {
   return (
     <div className="transacoes-page">
       <div className="transacoes-page__header">
-        <MonthSelector value={selectedMonth} onChange={setSelectedMonth} />
+        <div className="transacoes-page__filters">
+          <MonthSelector value={selectedMonth} onChange={setSelectedMonth} />
+          <Dropdown
+            id="ordenar-por"
+            options={OPCOES_ORDENACAO}
+            value={ordenarPor}
+            onChange={setOrdenarPor}
+          />
+        </div>
         <button type="button" className="transacoes-page__nova-btn" onClick={abrirNova}>
           + Nova transação
         </button>

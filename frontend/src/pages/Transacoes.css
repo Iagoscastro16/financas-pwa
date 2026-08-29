@@ -13,6 +13,17 @@
   gap: 1rem;
 }
 
+.transacoes-page__filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.transacoes-page__filters .dropdown {
+  min-width: 170px;
+}
+
 .transacoes-page__nova-btn {
   padding: 0.6rem 1.1rem;
   border: none;
