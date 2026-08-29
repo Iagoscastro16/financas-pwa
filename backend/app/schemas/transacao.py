@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -10,11 +10,13 @@ class TransacaoBase(BaseModel):
     conta_id: int
     tipo: TipoTransacao
     valor: float = Field(..., gt=0)
-    data: date
     descricao: str | None = Field(None, max_length=255)
 
 
 class TransacaoCreate(TransacaoBase):
+    # Opcional: se omitido, a rota define para datetime.now() no momento da
+    # requisição (não um default de schema, que seria avaliado antes disso).
+    data: datetime | None = None
     categoria_ids: list[int] = Field(default_factory=list)
 
 
@@ -22,7 +24,7 @@ class TransacaoUpdate(BaseModel):
     conta_id: int | None = None
     tipo: TipoTransacao | None = None
     valor: float | None = Field(None, gt=0)
-    data: date | None = None
+    data: datetime | None = None
     descricao: str | None = Field(None, max_length=255)
     categoria_ids: list[int] | None = None
 
@@ -31,5 +33,6 @@ class TransacaoRead(TransacaoBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    data: datetime
     criado_em: datetime
     categorias: list[CategoriaRead] = Field(default_factory=list)

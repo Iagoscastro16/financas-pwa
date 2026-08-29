@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 import pytest
 
 
@@ -31,6 +33,32 @@ def test_criar_transacao(auth_client, conta):
     assert body["descricao"] == "Compra"
     assert body["categorias"] == []
     assert "id" in body
+
+
+def test_criar_transacao_sem_data_usa_datetime_now(auth_client, conta):
+    antes = datetime.now()
+    response = auth_client.post(
+        "/transacoes",
+        json={"conta_id": conta["id"], "tipo": "saida", "valor": 42.5},
+    )
+    depois = datetime.now()
+    assert response.status_code == 201
+    data_retornada = datetime.fromisoformat(response.json()["data"])
+    assert antes - timedelta(seconds=5) <= data_retornada <= depois + timedelta(seconds=5)
+
+
+def test_criar_transacao_com_datetime_completo_preserva_horario(auth_client, conta):
+    response = auth_client.post(
+        "/transacoes",
+        json={
+            "conta_id": conta["id"],
+            "tipo": "saida",
+            "valor": 42.5,
+            "data": "2026-02-01T15:30:00",
+        },
+    )
+    assert response.status_code == 201
+    assert response.json()["data"] == "2026-02-01T15:30:00"
 
 
 def test_criar_transacao_com_categorias_retorna_categorias_aninhadas(

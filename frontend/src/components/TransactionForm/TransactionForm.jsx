@@ -8,8 +8,12 @@ import Dropdown from "../Dropdown/Dropdown";
 import MultiSelect from "../MultiSelect/MultiSelect";
 import "./TransactionForm.css";
 
-function hoje() {
-  return new Date().toISOString().slice(0, 10);
+function agora() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(
+    d.getMinutes()
+  )}`;
 }
 
 function valoresIniciais(initialValues) {
@@ -18,7 +22,7 @@ function valoresIniciais(initialValues) {
       contaId: "",
       tipo: "saida",
       valor: "",
-      data: hoje(),
+      data: agora(),
       descricao: "",
       categoriaIds: [],
     };
@@ -27,7 +31,9 @@ function valoresIniciais(initialValues) {
     contaId: String(initialValues.conta_id),
     tipo: initialValues.tipo,
     valor: String(initialValues.valor),
-    data: initialValues.data,
+    // A API devolve um datetime ISO completo ("YYYY-MM-DDTHH:mm:ss"); o
+    // input datetime-local só aceita até os minutos.
+    data: initialValues.data.slice(0, 16),
     descricao: initialValues.descricao ?? "",
     categoriaIds: (initialValues.categorias ?? []).map((categoria) => String(categoria.id)),
   };
@@ -206,12 +212,12 @@ export default function TransactionForm({ open, initialValues, onClose, onSaved 
         {errors.valor && <span className="transaction-form__error">{errors.valor}</span>}
 
         <label className="transaction-form__label" htmlFor="tf-data">
-          Data
+          Data e hora
         </label>
         <input
           id="tf-data"
           className="transaction-form__input"
-          type="date"
+          type="datetime-local"
           value={form.data}
           onChange={(event) => setForm((f) => ({ ...f, data: event.target.value }))}
         />

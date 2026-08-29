@@ -2,7 +2,7 @@ import CategoryBadge from "../CategoryBadge/CategoryBadge";
 import { formatarMoeda } from "../../utils/format";
 
 function formatarData(dataIso) {
-  const [ano, mes, dia] = dataIso.split("-");
+  const [ano, mes, dia] = dataIso.slice(0, 10).split("-");
   return `${dia}/${mes}/${ano}`;
 }
 

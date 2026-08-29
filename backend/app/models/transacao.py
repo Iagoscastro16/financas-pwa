@@ -1,7 +1,7 @@
 import enum
-from datetime import date, datetime
+from datetime import datetime
 
-from sqlalchemy import Date, DateTime, ForeignKey, Numeric, String, func
+from sqlalchemy import DateTime, ForeignKey, Numeric, String, func
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -20,7 +20,7 @@ class Transacao(Base):
     conta_id: Mapped[int] = mapped_column(ForeignKey("conta.id"), nullable=False)
     tipo: Mapped[TipoTransacao] = mapped_column(SAEnum(TipoTransacao), nullable=False)
     valor: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
-    data: Mapped[date] = mapped_column(Date, nullable=False)
+    data: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     descricao: Mapped[str | None] = mapped_column(String(255), nullable=True)
     criado_em: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 

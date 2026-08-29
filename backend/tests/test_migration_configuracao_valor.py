@@ -53,7 +53,7 @@ def test_upgrade_converte_linhas_booleanas_existentes_para_string(db_na_revisao_
     con.commit()
     con.close()
 
-    resultado = _alembic(db_na_revisao_anterior, "upgrade", "head")
+    resultado = _alembic(db_na_revisao_anterior, "upgrade", REVISAO_MIGRACAO)
     assert resultado.returncode == 0, resultado.stderr
     assert _versao_atual(db_na_revisao_anterior) == REVISAO_MIGRACAO
 
@@ -67,7 +67,7 @@ def test_upgrade_converte_linhas_booleanas_existentes_para_string(db_na_revisao_
 
 
 def test_upgrade_com_banco_vazio_nao_falha(db_na_revisao_anterior):
-    resultado = _alembic(db_na_revisao_anterior, "upgrade", "head")
+    resultado = _alembic(db_na_revisao_anterior, "upgrade", REVISAO_MIGRACAO)
     assert resultado.returncode == 0, resultado.stderr
     assert _versao_atual(db_na_revisao_anterior) == REVISAO_MIGRACAO
 

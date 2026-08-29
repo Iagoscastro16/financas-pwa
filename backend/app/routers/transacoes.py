@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -51,6 +53,8 @@ def criar_transacao(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Conta não encontrada")
 
     dados = payload.model_dump(exclude={"categoria_ids"})
+    if dados["data"] is None:
+        dados["data"] = datetime.now()
     transacao = Transacao(**dados)
     transacao.categorias = _buscar_categorias(db, payload.categoria_ids)
     db.add(transacao)
