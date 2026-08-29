@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 
-import { listarCategorias } from "../../api/categorias";
+import { criarCategoria, listarCategorias } from "../../api/categorias";
 import { atualizarOrcamento, criarOrcamento } from "../../api/orcamentos";
 import { nomeMesAno } from "../../utils/mesAno";
 import { useEnterToNextField } from "../../hooks/useEnterToNextField";
+import CategoriaCreateForm from "../InlineCreateForm/CategoriaCreateForm";
 import Dropdown from "../Dropdown/Dropdown";
 import "./BudgetForm.css";
 
@@ -143,6 +144,13 @@ export default function BudgetForm({ open, initialValues, mesAno, onClose, onSav
           value={form.categoriaId}
           onChange={(novoValor) => setForm((f) => ({ ...f, categoriaId: novoValor }))}
           placeholder="Selecione..."
+          createNewLabel="+ Criar nova categoria"
+          onCreateNew={async ({ nome, tipo }) => {
+            const nova = await criarCategoria({ nome, tipo });
+            setCategorias((atuais) => [...atuais, nova]);
+            return { value: String(nova.id), label: nova.nome };
+          }}
+          renderCreateForm={(props) => <CategoriaCreateForm {...props} />}
         />
         {errors.categoriaId && <span className="budget-form__error">{errors.categoriaId}</span>}
 

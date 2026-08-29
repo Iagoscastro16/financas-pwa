@@ -1,0 +1,86 @@
+.inline-create-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inline-create-form__input {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-text-secondary);
+  border-radius: 6px;
+  padding: 0.45rem 0.6rem;
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+}
+
+.inline-create-form__input:focus {
+  outline: none;
+  border-color: var(--color-accent-primary);
+}
+
+.inline-create-form__field-label {
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+}
+
+.inline-create-form__toggle {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.inline-create-form__toggle-btn {
+  flex: 1;
+  padding: 0.4rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-text-secondary);
+  background: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.inline-create-form__toggle-btn--active-income {
+  border-color: var(--color-accent-income);
+  color: var(--color-accent-income);
+  background-color: color-mix(in srgb, var(--color-accent-income) 15%, transparent);
+}
+
+.inline-create-form__toggle-btn--active-expense {
+  border-color: var(--color-accent-primary);
+  color: var(--color-accent-primary);
+  background-color: color-mix(in srgb, var(--color-accent-primary) 15%, transparent);
+}
+
+.inline-create-form__error {
+  color: var(--color-accent-primary);
+  font-size: 0.78rem;
+  margin: 0;
+}
+
+.inline-create-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.15rem;
+}
+
+.inline-create-form__button {
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-text-secondary);
+  background: none;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.inline-create-form__button--confirm {
+  background-color: var(--color-accent-primary);
+  border-color: var(--color-accent-primary);
+  font-weight: 600;
+}
+
+.inline-create-form__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

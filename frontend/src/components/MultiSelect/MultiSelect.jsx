@@ -2,11 +2,22 @@ import { useRef, useState } from "react";
 
 import CategoryBadge from "../CategoryBadge/CategoryBadge";
 import { useClickOutside } from "../../hooks/useClickOutside";
+import { extrairMensagemErro } from "../../utils/erros";
 import "./MultiSelect.css";
 
-export default function MultiSelect({ options, value, onChange }) {
+export default function MultiSelect({
+  options,
+  value,
+  onChange,
+  onCreateNew,
+  createNewLabel = "+ Criar novo",
+  renderCreateForm,
+}) {
   const [open, setOpen] = useState(false);
   const [filtro, setFiltro] = useState("");
+  const [criando, setCriando] = useState(false);
+  const [submetendoCriacao, setSubmetendoCriacao] = useState(false);
+  const [erroCriacao, setErroCriacao] = useState(null);
   const containerRef = useRef(null);
   const filterInputRef = useRef(null);
 
@@ -23,6 +34,8 @@ export default function MultiSelect({ options, value, onChange }) {
   function abrir() {
     setOpen(true);
     setFiltro("");
+    setCriando(false);
+    setErroCriacao(null);
     requestAnimationFrame(() => filterInputRef.current?.focus());
   }
 
@@ -32,6 +45,21 @@ export default function MultiSelect({ options, value, onChange }) {
 
   function remover(optionValue) {
     onChange(value.filter((v) => v !== String(optionValue)));
+  }
+
+  async function handleCreateSubmit(payload) {
+    setSubmetendoCriacao(true);
+    setErroCriacao(null);
+    try {
+      const novaOpcao = await onCreateNew(payload);
+      adicionar(novaOpcao.value);
+      setCriando(false);
+      setFiltro("");
+    } catch (err) {
+      setErroCriacao(extrairMensagemErro(err));
+    } finally {
+      setSubmetendoCriacao(false);
+    }
   }
 
   function handleFilterKeyDown(event) {
@@ -70,28 +98,53 @@ export default function MultiSelect({ options, value, onChange }) {
 
       {open && (
         <div className="multiselect__dropdown">
-          <input
-            ref={filterInputRef}
-            type="text"
-            className="multiselect__filter"
-            placeholder="Buscar categoria..."
-            value={filtro}
-            onChange={(event) => setFiltro(event.target.value)}
-            onKeyDown={handleFilterKeyDown}
-          />
-          <ul className="multiselect__list" role="listbox">
-            {restantesFiltradas.length === 0 && (
-              <li className="multiselect__empty">Nenhuma categoria encontrada.</li>
-            )}
-            {restantesFiltradas.map((option) => (
-              <li key={option.value} className="multiselect__option">
-                <label className="multiselect__option-label">
-                  <input type="checkbox" checked={false} onChange={() => adicionar(option.value)} />
-                  {option.label}
-                </label>
-              </li>
-            ))}
-          </ul>
+          {criando ? (
+            renderCreateForm({
+              onSubmit: handleCreateSubmit,
+              onCancel: () => {
+                setCriando(false);
+                setErroCriacao(null);
+              },
+              submitting: submetendoCriacao,
+              error: erroCriacao,
+            })
+          ) : (
+            <>
+              <input
+                ref={filterInputRef}
+                type="text"
+                className="multiselect__filter"
+                placeholder="Buscar categoria..."
+                value={filtro}
+                onChange={(event) => setFiltro(event.target.value)}
+                onKeyDown={handleFilterKeyDown}
+              />
+              <ul className="multiselect__list" role="listbox">
+                {restantesFiltradas.length === 0 && (
+                  <li className="multiselect__empty">Nenhuma categoria encontrada.</li>
+                )}
+                {restantesFiltradas.map((option) => (
+                  <li key={option.value} className="multiselect__option">
+                    <label className="multiselect__option-label">
+                      <input type="checkbox" checked={false} onChange={() => adicionar(option.value)} />
+                      {option.label}
+                    </label>
+                  </li>
+                ))}
+                {onCreateNew && (
+                  <li className="multiselect__option multiselect__option--create-new">
+                    <button
+                      type="button"
+                      className="multiselect__create-new-btn"
+                      onClick={() => setCriando(true)}
+                    >
+                      {createNewLabel}
+                    </button>
+                  </li>
+                )}
+              </ul>
+            </>
+          )}
         </div>
       )}
     </div>

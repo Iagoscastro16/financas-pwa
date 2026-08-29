@@ -1,27 +1,68 @@
 import { useEffect, useRef, useState } from "react";
 
 import { useClickOutside } from "../../hooks/useClickOutside";
+import { extrairMensagemErro } from "../../utils/erros";
 import "./Dropdown.css";
 
-export default function Dropdown({ id, options, value, onChange, placeholder = "Selecione..." }) {
+const CREATE_NEW_VALUE = "__criar_novo__";
+
+export default function Dropdown({
+  id,
+  options,
+  value,
+  onChange,
+  placeholder = "Selecione...",
+  onCreateNew,
+  createNewLabel = "+ Criar novo",
+  renderCreateForm,
+}) {
   const [open, setOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [criando, setCriando] = useState(false);
+  const [submetendoCriacao, setSubmetendoCriacao] = useState(false);
+  const [erroCriacao, setErroCriacao] = useState(null);
   const containerRef = useRef(null);
   const listRef = useRef(null);
 
   useClickOutside(containerRef, () => setOpen(false));
+
+  const opcoesNavegaveis =
+    onCreateNew && !criando
+      ? [...options, { value: CREATE_NEW_VALUE, label: createNewLabel, criarNovo: true }]
+      : options;
 
   const selectedIndex = options.findIndex((option) => String(option.value) === String(value));
   const selectedOption = selectedIndex >= 0 ? options[selectedIndex] : null;
 
   function openList() {
     setOpen(true);
+    setCriando(false);
+    setErroCriacao(null);
     setHighlightedIndex(selectedIndex >= 0 ? selectedIndex : 0);
   }
 
   function selectOption(option) {
+    if (option.criarNovo) {
+      setCriando(true);
+      return;
+    }
     onChange(option.value);
     setOpen(false);
+  }
+
+  async function handleCreateSubmit(payload) {
+    setSubmetendoCriacao(true);
+    setErroCriacao(null);
+    try {
+      const novaOpcao = await onCreateNew(payload);
+      onChange(novaOpcao.value);
+      setCriando(false);
+      setOpen(false);
+    } catch (err) {
+      setErroCriacao(extrairMensagemErro(err));
+    } finally {
+      setSubmetendoCriacao(false);
+    }
   }
 
   function handleKeyDown(event) {
@@ -33,10 +74,18 @@ export default function Dropdown({ id, options, value, onChange, placeholder = "
       return;
     }
 
+    if (criando) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setCriando(false);
+      }
+      return;
+    }
+
     switch (event.key) {
       case "ArrowDown":
         event.preventDefault();
-        setHighlightedIndex((i) => Math.min(i + 1, options.length - 1));
+        setHighlightedIndex((i) => Math.min(i + 1, opcoesNavegaveis.length - 1));
         break;
       case "ArrowUp":
         event.preventDefault();
@@ -45,7 +94,7 @@ export default function Dropdown({ id, options, value, onChange, placeholder = "
       case "Enter":
       case " ":
         event.preventDefault();
-        if (options[highlightedIndex]) selectOption(options[highlightedIndex]);
+        if (opcoesNavegaveis[highlightedIndex]) selectOption(opcoesNavegaveis[highlightedIndex]);
         break;
       case "Tab":
         setOpen(false);
@@ -65,10 +114,10 @@ export default function Dropdown({ id, options, value, onChange, placeholder = "
   }
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || criando) return;
     const highlighted = listRef.current?.querySelector('[data-highlighted="true"]');
     highlighted?.scrollIntoView({ block: "nearest" });
-  }, [open, highlightedIndex]);
+  }, [open, criando, highlightedIndex]);
 
   return (
     <div className="dropdown" ref={containerRef}>
@@ -89,10 +138,26 @@ export default function Dropdown({ id, options, value, onChange, placeholder = "
         </span>
       </button>
 
-      {open && (
+      {open && criando && (
+        <div className="dropdown__create-form">
+          {renderCreateForm({
+            onSubmit: handleCreateSubmit,
+            onCancel: () => {
+              setCriando(false);
+              setErroCriacao(null);
+            },
+            submitting: submetendoCriacao,
+            error: erroCriacao,
+          })}
+        </div>
+      )}
+
+      {open && !criando && (
         <ul className="dropdown__list" role="listbox" ref={listRef}>
-          {options.length === 0 && <li className="dropdown__empty">Nenhuma opção.</li>}
-          {options.map((option, index) => (
+          {options.length === 0 && !onCreateNew && (
+            <li className="dropdown__empty">Nenhuma opção.</li>
+          )}
+          {opcoesNavegaveis.map((option, index) => (
             <li
               key={option.value}
               role="option"
@@ -100,7 +165,9 @@ export default function Dropdown({ id, options, value, onChange, placeholder = "
               data-highlighted={index === highlightedIndex}
               className={`dropdown__option ${
                 index === highlightedIndex ? "dropdown__option--highlighted" : ""
-              } ${index === selectedIndex ? "dropdown__option--selected" : ""}`}
+              } ${index === selectedIndex ? "dropdown__option--selected" : ""} ${
+                option.criarNovo ? "dropdown__option--create-new" : ""
+              }`}
               onMouseEnter={() => setHighlightedIndex(index)}
               onClick={() => selectOption(option)}
             >

@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
-import { listarCategorias } from "../../api/categorias";
-import { listarContas } from "../../api/contas";
+import { criarCategoria, listarCategorias } from "../../api/categorias";
+import { criarConta, listarContas } from "../../api/contas";
 import { atualizarTransacao, criarTransacao } from "../../api/transacoes";
 import { useEnterToNextField } from "../../hooks/useEnterToNextField";
+import CategoriaCreateForm from "../InlineCreateForm/CategoriaCreateForm";
+import ContaCreateForm from "../InlineCreateForm/ContaCreateForm";
 import Dropdown from "../Dropdown/Dropdown";
 import MultiSelect from "../MultiSelect/MultiSelect";
 import "./TransactionForm.css";
@@ -171,6 +173,13 @@ export default function TransactionForm({ open, initialValues, onClose, onSaved 
           value={form.contaId}
           onChange={(novoValor) => setForm((f) => ({ ...f, contaId: novoValor }))}
           placeholder="Selecione..."
+          createNewLabel="+ Criar nova conta"
+          onCreateNew={async ({ nome, saldoInicial }) => {
+            const nova = await criarConta({ nome, saldoInicial });
+            setContas((atuais) => [...atuais, nova]);
+            return { value: String(nova.id), label: nova.nome };
+          }}
+          renderCreateForm={(props) => <ContaCreateForm {...props} />}
         />
         {errors.contaId && <span className="transaction-form__error">{errors.contaId}</span>}
 
@@ -243,6 +252,13 @@ export default function TransactionForm({ open, initialValues, onClose, onSaved 
           }))}
           value={form.categoriaIds}
           onChange={(novosIds) => setForm((f) => ({ ...f, categoriaIds: novosIds }))}
+          createNewLabel="+ Criar nova categoria"
+          onCreateNew={async ({ nome, tipo }) => {
+            const nova = await criarCategoria({ nome, tipo });
+            setCategorias((atuais) => [...atuais, nova]);
+            return { value: String(nova.id), label: nova.nome, tipo: nova.tipo };
+          }}
+          renderCreateForm={(props) => <CategoriaCreateForm {...props} />}
         />
 
         {apiError && <p className="transaction-form__api-error">{apiError}</p>}
