@@ -36,12 +36,27 @@
   color: var(--color-text-secondary);
 }
 
+.transaction-row__descricao-line {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
 .transaction-row__descricao {
   color: var(--color-text-primary);
   font-size: 0.95rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
+}
+
+.transaction-row__recurring-icon {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  cursor: default;
 }
 
 .transaction-row__categorias {

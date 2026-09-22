@@ -7,6 +7,8 @@ import MonthSelector from "../components/MonthSelector/MonthSelector";
 import TransactionList from "../components/TransactionList/TransactionList";
 import TransactionForm from "../components/TransactionForm/TransactionForm";
 import ConfirmDialog from "../components/ConfirmDialog/ConfirmDialog";
+import Tabs from "../components/Tabs/Tabs";
+import RecurrenceManager from "../components/RecurrenceManager/RecurrenceManager";
 import "./Transacoes.css";
 
 const OPCOES_ORDENACAO = [
@@ -15,7 +17,13 @@ const OPCOES_ORDENACAO = [
   { value: "categoria", label: "Categoria (A-Z)" },
 ];
 
+const ABAS = [
+  { value: "lancamentos", label: "Lançamentos" },
+  { value: "recorrencias", label: "Recorrências" },
+];
+
 export default function Transacoes() {
+  const [activeTab, setActiveTab] = useState("lancamentos");
   const [selectedMonth, setSelectedMonth] = useState(mesAtual());
   const [ordenarPor, setOrdenarPor] = useState("data_desc");
   const [transacoes, setTransacoes] = useState([]);
@@ -95,50 +103,58 @@ export default function Transacoes() {
 
   return (
     <div className="transacoes-page">
-      <div className="transacoes-page__header">
-        <div className="transacoes-page__filters">
-          <MonthSelector value={selectedMonth} onChange={setSelectedMonth} />
-          <Dropdown
-            id="ordenar-por"
-            options={OPCOES_ORDENACAO}
-            value={ordenarPor}
-            onChange={setOrdenarPor}
+      <Tabs tabs={ABAS} activeTab={activeTab} onChange={setActiveTab} />
+
+      {activeTab === "lancamentos" ? (
+        <>
+          <div className="transacoes-page__header">
+            <div className="transacoes-page__filters">
+              <MonthSelector value={selectedMonth} onChange={setSelectedMonth} />
+              <Dropdown
+                id="ordenar-por"
+                options={OPCOES_ORDENACAO}
+                value={ordenarPor}
+                onChange={setOrdenarPor}
+              />
+            </div>
+            <button type="button" className="transacoes-page__nova-btn" onClick={abrirNova}>
+              + Nova transação
+            </button>
+          </div>
+
+          <div className="card transacoes-page__content">
+            {error ? (
+              <p className="transacoes-page__error">{error}</p>
+            ) : loading ? (
+              <div className="skeleton transacoes-page__skeleton" />
+            ) : (
+              <TransactionList
+                transacoes={transacoes}
+                onEdit={abrirEdicao}
+                onDelete={setTransacaoParaExcluir}
+              />
+            )}
+          </div>
+
+          <TransactionForm
+            open={formOpen}
+            initialValues={editando}
+            onClose={fecharForm}
+            onSaved={aoSalvar}
           />
-        </div>
-        <button type="button" className="transacoes-page__nova-btn" onClick={abrirNova}>
-          + Nova transação
-        </button>
-      </div>
 
-      <div className="card transacoes-page__content">
-        {error ? (
-          <p className="transacoes-page__error">{error}</p>
-        ) : loading ? (
-          <div className="skeleton transacoes-page__skeleton" />
-        ) : (
-          <TransactionList
-            transacoes={transacoes}
-            onEdit={abrirEdicao}
-            onDelete={setTransacaoParaExcluir}
+          <ConfirmDialog
+            open={Boolean(transacaoParaExcluir)}
+            title="Excluir transação?"
+            message="Essa ação não pode ser desfeita."
+            confirmLabel="Excluir"
+            onConfirm={confirmarExclusao}
+            onCancel={() => setTransacaoParaExcluir(null)}
           />
-        )}
-      </div>
-
-      <TransactionForm
-        open={formOpen}
-        initialValues={editando}
-        onClose={fecharForm}
-        onSaved={aoSalvar}
-      />
-
-      <ConfirmDialog
-        open={Boolean(transacaoParaExcluir)}
-        title="Excluir transação?"
-        message="Essa ação não pode ser desfeita."
-        confirmLabel="Excluir"
-        onConfirm={confirmarExclusao}
-        onCancel={() => setTransacaoParaExcluir(null)}
-      />
+        </>
+      ) : (
+        <RecurrenceManager />
+      )}
     </div>
   );
 }

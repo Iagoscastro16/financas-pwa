@@ -23,6 +23,11 @@
   border-color: var(--color-accent-primary);
 }
 
+.dropdown__trigger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .dropdown__placeholder {
   color: var(--color-text-secondary);
 }

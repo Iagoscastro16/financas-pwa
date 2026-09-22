@@ -1,0 +1,143 @@
+.recurrence-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.recurrence-list__empty {
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: 2rem 0;
+  margin: 0;
+}
+
+.recurrence-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.9rem 1rem;
+  background-color: var(--color-bg);
+  border-radius: 10px;
+}
+
+.recurrence-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.recurrence-card__title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.recurrence-card__nome {
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recurrence-card__status {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.recurrence-card__status--ativo {
+  color: var(--color-accent-income);
+  background-color: color-mix(in srgb, var(--color-accent-income) 15%, transparent);
+}
+
+.recurrence-card__status--cancelada {
+  color: var(--color-text-secondary);
+  background-color: color-mix(in srgb, var(--color-text-secondary) 15%, transparent);
+}
+
+.recurrence-card__actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.recurrence-card__action-btn {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid var(--color-text-secondary);
+  background: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.recurrence-card__action-btn:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+
+.recurrence-card__action-btn--danger:hover {
+  color: var(--color-accent-primary);
+  border-color: var(--color-accent-primary);
+}
+
+.recurrence-card__action-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.recurrence-card__action-btn:disabled:hover {
+  color: var(--color-text-secondary);
+  border-color: var(--color-text-secondary);
+}
+
+.recurrence-card__body {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.recurrence-card__valor {
+  font-weight: 700;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.recurrence-card__valor--income {
+  color: var(--color-accent-income);
+}
+
+.recurrence-card__valor--expense {
+  color: var(--color-accent-primary);
+}
+
+.recurrence-card__dia {
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+}
+
+.recurrence-card__periodo {
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+}
+
+.recurrence-card__categorias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}

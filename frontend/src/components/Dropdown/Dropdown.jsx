@@ -15,6 +15,7 @@ export default function Dropdown({
   onCreateNew,
   createNewLabel = "+ Criar novo",
   renderCreateForm,
+  disabled = false,
 }) {
   const [open, setOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -127,8 +128,16 @@ export default function Dropdown({
         className="dropdown__trigger"
         aria-haspopup="listbox"
         aria-expanded={open}
-        onClick={() => (open ? setOpen(false) : openList())}
-        onKeyDown={handleKeyDown}
+        disabled={disabled}
+        onClick={() => {
+          if (disabled) return;
+          if (open) {
+            setOpen(false);
+          } else {
+            openList();
+          }
+        }}
+        onKeyDown={disabled ? undefined : handleKeyDown}
       >
         <span className={selectedOption ? "dropdown__value" : "dropdown__placeholder"}>
           {selectedOption ? selectedOption.label : placeholder}

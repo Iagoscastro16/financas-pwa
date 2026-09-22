@@ -13,8 +13,19 @@ export default function TransactionRow({ transacao, onEdit, onDelete }) {
     <li className="transaction-row">
       <div className="transaction-row__main">
         <span className="transaction-row__data">{formatarData(transacao.data)}</span>
-        <span className="transaction-row__descricao">
-          {transacao.descricao || "(sem descrição)"}
+        <span className="transaction-row__descricao-line">
+          <span className="transaction-row__descricao">
+            {transacao.descricao || "(sem descrição)"}
+          </span>
+          {transacao.recorrencia_id != null && (
+            <span
+              className="transaction-row__recurring-icon"
+              title="Gerado automaticamente por recorrência"
+              aria-label="Gerado automaticamente por recorrência"
+            >
+              🔁
+            </span>
+          )}
         </span>
         {transacao.categorias.length > 0 && (
           <div className="transaction-row__categorias">

@@ -1,0 +1,42 @@
+.recurrence-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.recurrence-manager__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.recurrence-manager__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.recurrence-manager__nova-btn {
+  padding: 0.6rem 1.1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--color-accent-primary);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.recurrence-manager__error {
+  color: var(--color-accent-primary);
+  margin: 0;
+}
+
+.recurrence-manager__skeleton {
+  height: 220px;
+}
