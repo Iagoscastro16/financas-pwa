@@ -22,9 +22,19 @@ class Transacao(Base):
     valor: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
     data: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     descricao: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    # Vínculo apenas informativo com a regra que gerou esta transação: ON
+    # DELETE SET NULL garante que, se a regra for excluída de fato do banco,
+    # as transações já geradas continuam existindo normalmente como
+    # transações avulsas, só perdendo a referência.
+    recorrencia_id: Mapped[int | None] = mapped_column(
+        ForeignKey("transacao_recorrente.id", ondelete="SET NULL"), nullable=True
+    )
     criado_em: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     conta: Mapped["Conta"] = relationship(back_populates="transacoes")
     categorias: Mapped[list["Categoria"]] = relationship(
         secondary="transacao_categoria", back_populates="transacoes"
+    )
+    recorrencia: Mapped["TransacaoRecorrente | None"] = relationship(
+        back_populates="transacoes_geradas"
     )

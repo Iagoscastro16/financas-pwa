@@ -27,7 +27,9 @@ from app.routers import (  # noqa: E402
     orcamentos,
     resumo,
     transacoes,
+    transacoes_recorrentes,
 )
+from app.scheduler import iniciar_scheduler, parar_scheduler  # noqa: E402
 from app.security_headers import add_security_headers  # noqa: E402
 
 # Schema criado/atualizado via Alembic (ver backend/README.md), não mais em
@@ -40,7 +42,9 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Aplicação iniciando")
+    iniciar_scheduler()
     yield
+    parar_scheduler()
     logger.info("Aplicação encerrando")
 
 
@@ -62,6 +66,7 @@ app.include_router(auth.router)
 app.include_router(contas.router)
 app.include_router(categorias.router)
 app.include_router(transacoes.router)
+app.include_router(transacoes_recorrentes.router)
 app.include_router(orcamentos.router)
 app.include_router(metas.router)
 app.include_router(auditoria.router)

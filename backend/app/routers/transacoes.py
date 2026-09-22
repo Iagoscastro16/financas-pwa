@@ -78,6 +78,7 @@ def criar_transacao(
 def listar_transacoes(
     mes_ano: str | None = None,
     ordenar_por: str = "data_desc",
+    apenas_recorrentes: bool | None = None,
     db: Session = Depends(get_db),
 ) -> list[Transacao]:
     if ordenar_por not in ORDENACOES_VALIDAS:
@@ -90,6 +91,11 @@ def listar_transacoes(
     if mes_ano is not None:
         inicio, fim = limites_mes(mes_ano)
         stmt = stmt.where(Transacao.data >= inicio, Transacao.data < fim)
+    if apenas_recorrentes is not None:
+        if apenas_recorrentes:
+            stmt = stmt.where(Transacao.recorrencia_id.isnot(None))
+        else:
+            stmt = stmt.where(Transacao.recorrencia_id.is_(None))
 
     if ordenar_por == "data_asc":
         stmt = stmt.order_by(Transacao.data.asc(), Transacao.id.asc())

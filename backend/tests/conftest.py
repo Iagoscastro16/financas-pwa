@@ -18,6 +18,12 @@ os.environ["JWT_SECRET_KEY"] = "test-secret-key-used-only-in-pytest"
 os.environ["DATABASE_URL"] = "sqlite://"
 # Mesma lógica para o log de auditoria: nunca tocar o auditoria.db real.
 os.environ["AUDIT_DATABASE_URL"] = "sqlite://"
+# O scheduler de transações recorrentes usa `app.database.SessionLocal`
+# diretamente (fora do ciclo de dependências do FastAPI), então não é afetado
+# pelo override de `get_db` por teste — rodá-lo aqui bateria num engine
+# global sem nenhuma tabela criada. Os testes de geração chamam a lógica de
+# `app.recorrencia` diretamente contra a sessão de teste isolada.
+os.environ["DISABLE_SCHEDULER"] = "true"
 
 import pytest  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402

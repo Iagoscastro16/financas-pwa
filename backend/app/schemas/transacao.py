@@ -35,4 +35,5 @@ class TransacaoRead(TransacaoBase):
     id: int
     data: datetime
     criado_em: datetime
+    recorrencia_id: int | None = None
     categorias: list[CategoriaRead] = Field(default_factory=list)
